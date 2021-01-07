@@ -81,7 +81,7 @@ exports.updateUser = async (user) => {
     throw { status:400 , message : 'id is not valid'}
   }
   user.name = user.name != undefined ? user.name : userSaved.name;
-  user.password = user.password != undefined ? await bcryptjs.hash(user.password,10) : userSaved.name;
+  user.password = user.password != undefined ? await bcryptjs.hash(user.password,10) : userSaved.password;
   user.email = user.email != undefined ? user.email : userSaved.email;
   user.dateOfBirth = user.dateOfBirth != undefined ? user.dateOfBirth : userSaved.dateOfBirth;
   user.typeUser = user.typeUser != undefined ? user.typeUser : userSaved.typeUser;
