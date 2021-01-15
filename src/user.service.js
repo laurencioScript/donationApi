@@ -80,8 +80,23 @@ exports.updateUser = async (user) => {
   if(!userSaved || !userSaved.id ){
     throw { status:400 , message : 'id is not valid'}
   }
+
+  if(user.password != undefined){
+    const passwordIsValid = await bcryptjs.compare(user.oldPassword, userSaved.password|| '')
+    if(!passwordIsValid){
+      throw {
+        message:'invalid password',
+        status:400
+      }
+    }
+    user.password = await bcryptjs.hash(user.password,10);
+  }
+  else{
+    user.password = userSaved.password;
+  }
+  
+
   user.name = user.name != undefined ? user.name : userSaved.name;
-  user.password = user.password != undefined ? await bcryptjs.hash(user.password,10) : userSaved.password;
   user.email = user.email != undefined ? user.email : userSaved.email;
   user.dateOfBirth = user.dateOfBirth != undefined ? user.dateOfBirth : userSaved.dateOfBirth;
   user.typeUser = user.typeUser != undefined ? user.typeUser : userSaved.typeUser;
@@ -92,5 +107,7 @@ exports.updateUser = async (user) => {
   user.city = user.city != undefined ? user.city : userSaved.city;
   user.uf = user.uf != undefined ? user.uf : userSaved.uf;
 
-  return userDal.updateUser(user);
+  const userUpdated = await userDal.updateUser(user);
+  delete userUpdated.password;
+  return userUpdated;
 }
